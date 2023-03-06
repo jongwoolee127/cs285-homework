@@ -1,0 +1,4 @@
+# exclude data
+data
+cs285/expert_data
+cs285/policies/experts

@@ -85,6 +85,8 @@ def main():
     parser.add_argument('--seed', type=int, default=1)
     args = parser.parse_args()
 
+    print(args)
+
     # convert args to dictionary
     params = vars(args)
 
