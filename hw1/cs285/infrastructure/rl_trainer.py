@@ -9,6 +9,8 @@ from cs285.infrastructure import pytorch_util as ptu
 from cs285.infrastructure.logger import Logger
 from cs285.infrastructure import utils
 
+import pickle
+
 # how many rollouts to save as videos to tensorboard
 MAX_NVIDEO = 2
 MAX_VIDEO_LEN = 40  # we overwrite this in the code below
@@ -168,7 +170,20 @@ class RL_Trainer(object):
         # HINT1: use sample_trajectories from utils
         # HINT2: you want each of these collected rollouts to be of length self.params['ep_len']
         print("\nCollecting data to be used for training...")
-        paths, envsteps_this_batch = TODO
+
+        # paths, envsteps_this_batch = TODO
+        if itr == 0:
+            with open(load_initial_expertdata, 'rb') as paths_file:
+                loaded_paths = pickle.load(paths_file)
+            return loaded_paths, 0, None
+        else :
+            paths, envsteps_this_batch = utils.sample_trajectories(
+                self.env, 
+                self.policy, 
+                self.params['batch_size'] // self.params['ep_len'] , 
+                self.params['ep_len']
+            )
+            
 
         # collect more rollouts with the same policy, to be saved as videos in tensorboard
         # note: here, we collect MAX_NVIDEO rollouts, each of length MAX_VIDEO_LEN
