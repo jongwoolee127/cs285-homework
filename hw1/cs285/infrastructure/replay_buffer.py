@@ -78,7 +78,7 @@ class ReplayBuffer(object):
         ## HINT 3: look at the sample_recent_data function below
 
         # return TODO, TODO, TODO, TODO, TODO
-        sample_random_indices = np.random.permutation(len(self))[:batch_size]
+        sample_random_indices = np.random.permutation(self.obs.shape[0])[:batch_size]
 
         return (
             self.obs[sample_random_indices], 

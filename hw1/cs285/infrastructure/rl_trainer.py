@@ -179,8 +179,8 @@ class RL_Trainer(object):
         else :
             paths, envsteps_this_batch = utils.sample_trajectories(
                 self.env, 
-                self.policy, 
-                self.params['batch_size'] // self.params['ep_len'] , 
+                collect_policy, 
+                batch_size // self.params['ep_len'] , 
                 self.params['ep_len']
             )
             
@@ -191,8 +191,9 @@ class RL_Trainer(object):
         if self.log_video:
             print('\nCollecting train rollouts to be used for saving videos...')
             ## TODO look in utils and implement sample_n_trajectories
-            train_video_paths = utils.sample_n_trajectories(self.env, collect_policy, MAX_NVIDEO, MAX_VIDEO_LEN, True)
-
+            train_video_paths = utils.sample_n_trajectories(
+                self.env, collect_policy, MAX_NVIDEO, MAX_VIDEO_LEN, True)
+        print('self.log_video: ', self.log_video, 'train_video_paths: ', train_video_paths)    
         return paths, envsteps_this_batch, train_video_paths
 
 
@@ -204,12 +205,18 @@ class RL_Trainer(object):
             # TODO sample some data from the data buffer
             # HINT1: use the agent's sample function
             # HINT2: how much data = self.params['train_batch_size']
-            ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = TODO
+            # ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = TODO
+
+            ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = \
+                self.agent.sample(self.params['train_batch_size'])
+
 
             # TODO use the sampled data to train an agent
             # HINT: use the agent's train function
             # HINT: keep the agent's training log for debugging
-            train_log = TODO
+            # train_log = TODO
+            train_log = self.agent.train(
+                ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch )
             all_logs.append(train_log)
         return all_logs
 
@@ -220,6 +227,12 @@ class RL_Trainer(object):
         # HINT: query the policy (using the get_action function) with paths[i]["observation"]
         # and replace paths[i]["action"] with these expert labels
 
+        for path in paths:
+            for t, obs in enumerate(path["observation"]):
+                path["action"][t] = expert_policy.get_action(obs) 
+
+        # print(path)
+                
         return paths
 
     ####################################
@@ -230,7 +243,8 @@ class RL_Trainer(object):
         # collect eval trajectories, for logging
         print("\nCollecting data for eval...")
         eval_paths, eval_envsteps_this_batch = utils.sample_trajectories(self.env, eval_policy, self.params['eval_batch_size'], self.params['ep_len'])
-
+        print('self.log video in line246', self.log_video)
+        print('train_video_paths', train_video_paths)
         # save eval rollouts as videos in tensorboard event file
         if self.log_video and train_video_paths != None:
             print('\nCollecting video rollouts eval')
