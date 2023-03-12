@@ -28,6 +28,8 @@ class RL_Trainer(object):
         self.params = params
         self.logger = Logger(self.params['logdir'])
 
+        print('ep_len:', params['ep_len'])
+
         # Set random seeds
         seed = self.params['seed']
         np.random.seed(seed)
