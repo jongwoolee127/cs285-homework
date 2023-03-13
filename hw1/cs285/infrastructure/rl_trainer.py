@@ -28,8 +28,6 @@ class RL_Trainer(object):
         self.params = params
         self.logger = Logger(self.params['logdir'])
 
-        print('ep_len:', params['ep_len'])
-
         # Set random seeds
         seed = self.params['seed']
         np.random.seed(seed)
@@ -195,7 +193,9 @@ class RL_Trainer(object):
             ## TODO look in utils and implement sample_n_trajectories
             train_video_paths = utils.sample_n_trajectories(
                 self.env, collect_policy, MAX_NVIDEO, MAX_VIDEO_LEN, True)
-        print('self.log_video: ', self.log_video, 'train_video_paths: ', train_video_paths)    
+        # print('self.log_video: ', self.log_video, 'train_video_paths keys: ', train_video_paths.keys())    
+        # for key in train_video_paths.keys():
+        #     print('train_video_paths[', key, ']: ', type(train_video_paths.keys()))
         return paths, envsteps_this_batch, train_video_paths
 
 
@@ -245,8 +245,8 @@ class RL_Trainer(object):
         # collect eval trajectories, for logging
         print("\nCollecting data for eval...")
         eval_paths, eval_envsteps_this_batch = utils.sample_trajectories(self.env, eval_policy, self.params['eval_batch_size'], self.params['ep_len'])
-        print('self.log video in line246', self.log_video)
-        print('train_video_paths', train_video_paths)
+        # print('self.log video in line246', self.log_video)
+        # print('train_video_paths.keys:', train_video_paths.keys())
         # save eval rollouts as videos in tensorboard event file
         if self.log_video and train_video_paths != None:
             print('\nCollecting video rollouts eval')
