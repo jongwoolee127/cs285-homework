@@ -3,7 +3,7 @@
 # update conda env using: conda env update -f <filename>.yml or simply conda env update
 # then create .env file (copy from other .env files, ...)
 
-name: cs285
+name: cs285-hw1
 channels:
   - conda-forge
   - defaults
