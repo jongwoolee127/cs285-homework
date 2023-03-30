@@ -14,6 +14,8 @@ from cs285.infrastructure import utils
 from cs285.infrastructure.logger import Logger
 from cs285.infrastructure.action_noise_wrapper import ActionNoiseWrapper
 
+import ipdb
+
 # how many rollouts to save as videos to tensorboard
 MAX_NVIDEO = 2
 MAX_VIDEO_LEN = 40 # we overwrite this in the code below
@@ -180,7 +182,8 @@ class RL_Trainer(object):
         # Collect `batch_size` samples to be used for training
         print("\nCollecting data to be used for training...")
 
-        if itr == 0:
+        if itr == 0 and load_initial_expertdata is not None:
+            # ipdb.set_trace()
             with open(load_initial_expertdata, 'rb') as paths_file:
                 loaded_paths = pickle.load(paths_file)
             return loaded_paths, 0, None
