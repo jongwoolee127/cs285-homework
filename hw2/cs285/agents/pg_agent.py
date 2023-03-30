@@ -131,6 +131,7 @@ class PGAgent(BaseAgent):
                     ## HINT: use terminals to handle edge cases. terminals[i]
                         ## is 1 if the state is the last in its trajectory, and
                         ## 0 otherwise.
+                    ipdb.set_trace()
 
                 # remove dummy advantage
                 advantages = advantages[:-1]
@@ -157,6 +158,8 @@ class PGAgent(BaseAgent):
         self.replay_buffer.add_rollouts(paths)
 
     def sample(self, batch_size):
+        ipdb.set_trace()
+
         return self.replay_buffer.sample_recent_data(batch_size, concat_rew=False)
 
     #####################################################
