@@ -4,6 +4,7 @@ from .base_agent import BaseAgent
 from cs285.policies.MLP_policy import MLPPolicyPG
 from cs285.infrastructure.replay_buffer import ReplayBuffer
 
+import ipdb
 
 class PGAgent(BaseAgent):
     def __init__(self, env, agent_params):
@@ -69,12 +70,28 @@ class PGAgent(BaseAgent):
         # then flattened to a 1D numpy array.
 
         if not self.reward_to_go:
-            TODO
+            # TODO
+
+            ipdb.set_trace()
+
+            N,T = np.shape(rewards_list)
+            q_values = np.zeros(np.shape(rewards_list))
+            for n in range(N):
+                q_values[n] = self._discounted_return(self, rewards_list[n])
+            q_values = q_values.flatten()
 
         # Case 2: reward-to-go PG
         # Estimate Q^{pi}(s_t, a_t) by the discounted sum of rewards starting from t
         else:
-            TODO
+            # TODO
+            
+            ipdb.set_trace()
+            
+            N,T = np.shape(rewards_list)
+            q_values = np.zeros(np.shape(rewards_list))
+            for n in range(N):
+                q_values[n] = self._discounted_cumsum(self, rewards_list[n])
+            q_values = q_values.flatten()
 
         return q_values
 
@@ -114,6 +131,7 @@ class PGAgent(BaseAgent):
                     ## HINT: use terminals to handle edge cases. terminals[i]
                         ## is 1 if the state is the last in its trajectory, and
                         ## 0 otherwise.
+                    ipdb.set_trace()
 
                 # remove dummy advantage
                 advantages = advantages[:-1]
@@ -140,6 +158,8 @@ class PGAgent(BaseAgent):
         self.replay_buffer.add_rollouts(paths)
 
     def sample(self, batch_size):
+        ipdb.set_trace()
+
         return self.replay_buffer.sample_recent_data(batch_size, concat_rew=False)
 
     #####################################################
@@ -155,6 +175,11 @@ class PGAgent(BaseAgent):
             Output: list where each index t contains sum_{t'=0}^T gamma^t' r_{t'}
         """
 
+        T = len(rewards)
+        gamma_power = np.power(self.gamma, np.arange(T))
+        discounted_return = np.sum(gamma_power * rewards)
+        list_of_discounted_returns = np.repeat(discounted_return, T)
+
         return list_of_discounted_returns
 
     def _discounted_cumsum(self, rewards):
@@ -163,5 +188,12 @@ class PGAgent(BaseAgent):
             -takes a list of rewards {r_0, r_1, ..., r_t', ... r_T},
             -and returns a list where the entry in each index t' is sum_{t'=t}^T gamma^(t'-t) * r_{t'}
         """
+
+        T = len(rewards)
+        list_of_discounted_cumsums = np.zeros(T)
+        gamma_power = np.power(self.gamma, np.arange(T))
+        # is there a way to avoid using for loop? 
+        for t in range(T):
+            list_of_discounted_cumsums[t] = np.sum( gamma_power[:T-t] * rewards[t:])
 
         return list_of_discounted_cumsums
