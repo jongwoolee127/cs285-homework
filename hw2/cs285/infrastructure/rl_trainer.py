@@ -181,19 +181,22 @@ class RL_Trainer(object):
 
         # Collect `batch_size` samples to be used for training
         print("\nCollecting data to be used for training...")
+        ipdb.set_trace()
 
         if itr == 0 and load_initial_expertdata is not None:
-            # ipdb.set_trace()
             with open(load_initial_expertdata, 'rb') as paths_file:
                 loaded_paths = pickle.load(paths_file)
             return loaded_paths, 0, None
         else :
             paths, envsteps_this_batch = utils.sample_trajectories(
-                self.env, 
-                collect_policy, 
-                batch_size // self.params['ep_len'] , 
-                self.params['ep_len']
+                env = self.env, 
+                policy = collect_policy, 
+                min_timesteps_per_batch = batch_size, 
+                max_path_length = self.params['ep_len']
             )
+            # or use 
+            # sample_trajectories(env, policy, min_timesteps_per_batch, max_path_length)
+            # sample_n_trajectories(env, policy, ntraj = batch_size // self.params['ep_len'], max_path_length)
             
 
         # collect more rollouts with the same policy, to be saved as videos in tensorboard
