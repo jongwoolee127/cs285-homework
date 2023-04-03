@@ -180,7 +180,7 @@ class RL_Trainer(object):
             paths, envsteps_this_batch = utils.sample_trajectories(
                 self.env, 
                 collect_policy, 
-                batch_size // self.params['ep_len'] , 
+                batch_size, 
                 self.params['ep_len']
             )
             
