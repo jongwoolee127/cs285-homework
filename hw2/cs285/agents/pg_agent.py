@@ -76,8 +76,6 @@ class PGAgent(BaseAgent):
         if not self.reward_to_go:
             # TODO
 
-            ipdb.set_trace()
-
             num_traj = len(rewards_list)
             q_values = []
             for id_traj in range(num_traj):
@@ -88,8 +86,6 @@ class PGAgent(BaseAgent):
         # Estimate Q^{pi}(s_t, a_t) by the discounted sum of rewards starting from t
         else:
             # TODO
-            
-            ipdb.set_trace()
             
             num_traj = len(rewards_list)
             q_values = []
