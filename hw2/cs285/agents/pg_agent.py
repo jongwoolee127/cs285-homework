@@ -78,11 +78,11 @@ class PGAgent(BaseAgent):
 
             ipdb.set_trace()
 
-            num_traj,len_traj = np.shape(rewards_list)
-            q_values = np.zeros(np.shape(rewards_list))
+            num_traj = len(rewards_list)
+            q_values = []
             for id_traj in range(num_traj):
-                q_values[id_traj] = self._discounted_return(self, rewards_list[id_traj])
-            q_values = q_values.flatten()
+                q_values.append(self._discounted_return(rewards_list[id_traj]))
+            q_values = np.concatenate([np.array(sublist) for sublist in q_values])
 
         # Case 2: reward-to-go PG
         # Estimate Q^{pi}(s_t, a_t) by the discounted sum of rewards starting from t
@@ -91,11 +91,11 @@ class PGAgent(BaseAgent):
             
             ipdb.set_trace()
             
-            num_traj,len_traj = np.shape(rewards_list)
-            q_values = np.zeros(np.shape(rewards_list))
+            num_traj = len(rewards_list)
+            q_values = []
             for id_traj in range(num_traj):
-                q_values[id_traj] = self._discounted_cumsum(self, rewards_list[id_traj])
-            q_values = q_values.flatten()
+                q_values.values(self._discounted_cumsum(rewards_list[id_traj]))
+            q_values = np.concatenate([np.array(sublist) for sublist in q_values])
 
         return q_values
 
@@ -191,6 +191,7 @@ class PGAgent(BaseAgent):
             -and returns a list where the entry in each index t' is sum_{t'=t}^T gamma^(t'-t) * r_{t'}
         """
 
+        ipdb.set_trace()
         T = len(rewards)
         list_of_discounted_cumsums = np.zeros(T)
         gamma_power = np.power(self.gamma, np.arange(T))
