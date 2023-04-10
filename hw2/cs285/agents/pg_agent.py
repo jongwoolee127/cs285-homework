@@ -44,6 +44,10 @@ class PGAgent(BaseAgent):
         # using helper functions to compute qvals and advantages, and
         # return the train_log obtained from updating the policy
 
+        q_values = self.calculate_q_vals(rewards_list)
+        advantages = self.estimate_advantage(observations, rewards_list, q_values, terminals)
+        # advantages = self.estimate_advantage(obs: np.ndarray, rews_list: np.ndarray, q_values: np.ndarray, terminals: np.ndarray)
+        train_log = self.actor.update(observations, actions, advantages, q_values)
         return train_log
 
     def calculate_q_vals(self, rewards_list):
@@ -74,10 +78,10 @@ class PGAgent(BaseAgent):
 
             ipdb.set_trace()
 
-            N,T = np.shape(rewards_list)
+            num_traj,len_traj = np.shape(rewards_list)
             q_values = np.zeros(np.shape(rewards_list))
-            for n in range(N):
-                q_values[n] = self._discounted_return(self, rewards_list[n])
+            for id_traj in range(num_traj):
+                q_values[id_traj] = self._discounted_return(self, rewards_list[id_traj])
             q_values = q_values.flatten()
 
         # Case 2: reward-to-go PG
@@ -87,10 +91,10 @@ class PGAgent(BaseAgent):
             
             ipdb.set_trace()
             
-            N,T = np.shape(rewards_list)
+            num_traj,len_traj = np.shape(rewards_list)
             q_values = np.zeros(np.shape(rewards_list))
-            for n in range(N):
-                q_values[n] = self._discounted_cumsum(self, rewards_list[n])
+            for id_traj in range(num_traj):
+                q_values[id_traj] = self._discounted_cumsum(self, rewards_list[id_traj])
             q_values = q_values.flatten()
 
         return q_values
@@ -158,8 +162,6 @@ class PGAgent(BaseAgent):
         self.replay_buffer.add_rollouts(paths)
 
     def sample(self, batch_size):
-        ipdb.set_trace()
-
         return self.replay_buffer.sample_recent_data(batch_size, concat_rew=False)
 
     #####################################################
