@@ -90,7 +90,7 @@ class PGAgent(BaseAgent):
             num_traj = len(rewards_list)
             q_values = []
             for id_traj in range(num_traj):
-                q_values.values(self._discounted_cumsum(rewards_list[id_traj]))
+                q_values.append(self._discounted_cumsum(rewards_list[id_traj]))
             q_values = np.concatenate([np.array(sublist) for sublist in q_values])
 
         return q_values
@@ -187,7 +187,7 @@ class PGAgent(BaseAgent):
             -and returns a list where the entry in each index t' is sum_{t'=t}^T gamma^(t'-t) * r_{t'}
         """
 
-        ipdb.set_trace()
+        # ipdb.set_trace()
         T = len(rewards)
         list_of_discounted_cumsums = np.zeros(T)
         gamma_power = np.power(self.gamma, np.arange(T))
