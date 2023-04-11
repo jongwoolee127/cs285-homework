@@ -11,6 +11,7 @@ from torch import distributions
 from cs285.infrastructure import pytorch_util as ptu
 from cs285.policies.base_policy import BasePolicy
 
+import ipdb
 
 class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 
@@ -142,7 +143,34 @@ class MLPPolicyPG(MLPPolicy):
         # HINT2: you will want to use the `log_prob` method on the distribution returned
             # by the `forward` method
 
-        TODO
+        # TODO
+        # to implement policy gradient, we define a pseudo-loss instead of the real loss function.
+        # the real objective is to maximize J = expectation of sum[r_t(params)]
+        # we know its gradient grad J = expectation of grad [log pi(a_t|s_t, params) * Q_t]
+        # thus, a pseudo loss is J' = expectation of [log pi(a_t|s_t, params)*Q_t]
+        # because its gradient is grad J' = expectation of [grad [log pi(a_t|s_t, params)*Q_t]] = grad J
+
+        # ipdb.set_trace()
+        action_distribution = self.forward(observations)
+        log_pis = action_distribution.log_prob(actions)
+
+        # loss = -((log_pis * advantages).sum()) #good result
+        loss = -((log_pis * advantages).sum()/1000) #good result
+        # loss = torch.neg((log_pis * advantages).sum()/1000) #good result
+        # loss = -(torch.mean(log_pis * advantages)) #bad result
+        # loss = -((log_pis * advantages).mean()) # bad result
+        # loss = -(torch.mul(log_pis, advantages).sum()/1000) #good result
+        # loss = torch.neg(torch.mean(torch.mul(log_pis, advantages))) # bad result 
+
+        # why this causes problem?
+        # loss = loss.clone().detach()
+        # loss.requires_grad = True 
+        # ipdb.set_trace()
+        self.optimizer.zero_grad()  # zero out gradients
+        loss.backward()             # populate gradients
+        self.optimizer.step()       # update each parameter via gradient descent to MINIMIZES a loss
+
+        # print(model.weight.grad.abs().sum())
 
         if self.nn_baseline:
             ## TODO: update the neural network baseline using the q_values as
