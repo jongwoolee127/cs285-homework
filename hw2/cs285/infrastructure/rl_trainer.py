@@ -181,7 +181,7 @@ class RL_Trainer(object):
 
         # Collect `batch_size` samples to be used for training
         print("\nCollecting data to be used for training...")
-        ipdb.set_trace()
+        # ipdb.set_trace()
 
         if itr == 0 and load_initial_expertdata is not None:
             with open(load_initial_expertdata, 'rb') as paths_file:
